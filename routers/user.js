@@ -34,7 +34,7 @@ router.post("/cmtP/:id/:idP", verifyToken, cmtProduct);
 router.get("/getP/:id", verifyToken, getProduct);
 router.get("/getCart/:id", verifyToken, getCart);
 router.get("/getOrder/:id", verifyToken, getOrder);
-router.get("/getUser/:id", getUser);
+router.get("/getUser/:id", verifyToken, getUser);
 router.get("/getAllUser", verifyToken, verifyRole("admin"), getAllUser);
 router.get(
   "/getAllProduct",

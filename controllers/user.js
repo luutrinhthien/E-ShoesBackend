@@ -33,7 +33,7 @@ export const postProduct = async (req, res) => {
     });
 
     newProduct.save();
-    res.json(newProduct);
+    res.status(201).json(newProduct);
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -219,10 +219,12 @@ export const getUser = async (req, res) => {
   try {
     let _id = req.params.id;
     let _userInf = await User.findOne({ _id });
-    let _userProduct = await Product.find({ _idUser: _id });
-    _userInf.username = undefined;
-    _userInf.password = undefined;
-    res.status(200).json({ _userInf, _userProduct });
+    if (_userInf) {
+      _userInf.username = undefined;
+      _userInf.password = undefined;
+    }
+
+    res.status(200).json({ _userInf });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
