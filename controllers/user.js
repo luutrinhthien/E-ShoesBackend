@@ -10,9 +10,9 @@ import cloudinary from "../components/uploadImage.cjs";
 /** Post product */
 export const postProduct = async (req, res) => {
   try {
-    let _idUser = req.params.id;
     const imageUrls = [];
     const files = req.files;
+    console.log(files);
     for (let i = 0; i < files.length; i++) {
       const result = await cloudinary.uploader.upload(files[i].path, {
         folder: "E-shoes",
@@ -21,7 +21,6 @@ export const postProduct = async (req, res) => {
     }
 
     const newProduct = new Product({
-      _idUser,
       TenSp: req.body.TenSp,
       LoaiSp: req.body.LoaiSp,
       HangSanXuat: req.body.HangSanXuat,
@@ -39,13 +38,14 @@ export const postProduct = async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 };
+
 /* Get products */
 export const getProduct = async (req, res) => {
   try {
-    const _idUser = req.params.id;
-    const products = await Product.find({ _idUser });
+    const _idP = req.params.id;
+    const product = await Product.findOne({ _idP });
 
-    res.status(200).json(products);
+    res.status(200).json(product);
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -87,7 +87,6 @@ export const getCart = async (req, res) => {
 /** update remove product */
 export const removeProduct = async (req, res) => {
   try {
-    let _idUser = req.params.id;
     let _idP = req.params.idP;
 
     const product = await Product.findOneAndRemove({ _id: _idP });
@@ -95,6 +94,20 @@ export const removeProduct = async (req, res) => {
       res.status(200).json({ message: "Delete Complete" });
     } else {
       res.status(404).json({ message: "Product not found" });
+    }
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
+
+/** get all product */
+export const getAllProduct = async (req, res) => {
+  try {
+    const product = await Product.find({});
+    if (product) {
+      res.status(200).json({ products: product });
+    } else {
+      res.status(404).json({ message: "No product found" });
     }
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -154,6 +167,30 @@ export const updateUser = async (req, res) => {
   }
 };
 
+/* Update Role */
+
+export const updateRole = async (req, res) => {
+  try {
+    let _id = req.params.id;
+    User.findOneAndUpdate(
+      { _id: _id },
+      {
+        $set: {
+          role: req.body.role,
+        },
+      }
+    ).then((updatedUser) => {
+      if (updatedUser) {
+        res.status(200).json({ message: "Updated Successfully" });
+      } else {
+        res.status(400).json({ message: "Invalid User" });
+      }
+    });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
+
 /*Get Order */
 
 export const getOrder = async (req, res) => {
@@ -161,6 +198,16 @@ export const getOrder = async (req, res) => {
     let _idUser = req.params.id;
     const orders = await Order.find({ _idUser: _idUser });
     res.status(200).json(orders);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
+
+/* Get All Order */
+export const getAllOrder = async (req, res) => {
+  try {
+    const orderMap = await Order.find({});
+    res.status(200).json(orderMap);
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -181,6 +228,21 @@ export const getUser = async (req, res) => {
   }
 };
 
+/* Get User */
+
+export const getAllUser = async (req, res) => {
+  try {
+    let _userInf = await User.find({});
+    for (let i = 0; i < _userInf.length; i++) {
+      _userInf[i].username = undefined;
+      _userInf[i].password = undefined;
+    }
+
+    res.status(200).json({ _userInf });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
 /* Remove product from cart */
 
 export const removeProductCart = async (req, res) => {

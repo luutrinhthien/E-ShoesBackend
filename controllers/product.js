@@ -42,10 +42,7 @@ export const infProduct = async (req, res) => {
     let _idP = req.params.idP;
     const infProduct = await Product.findOne({ _id: _idP });
     const cmts = await Comment.find({ _idSp: _idP });
-    let infSeller = await User.findOne({ _id: infProduct._idUser });
-    infSeller.password = undefined;
-    infSeller.username = undefined;
-    res.status(200).json({ infProduct, infSeller, cmts });
+    res.status(200).json({ infProduct, cmts });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
