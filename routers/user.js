@@ -20,14 +20,14 @@ const router = express.Router();
 
 /** POST  id:/ _idUser*/
 
-router.post("/postP", verifyToken, postProduct);
-
 router.post(
-  "/cmtP/:id/:idP",
+  "/postP",
   verifyToken,
   verifyRole("admin", "operator"),
-  cmtProduct
+  postProduct
 );
+
+router.post("/cmtP/:id/:idP", verifyToken, cmtProduct);
 
 /** READ  id: _idUser*/
 
